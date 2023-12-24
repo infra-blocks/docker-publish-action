@@ -11,10 +11,13 @@ jobs:
   self-test:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v3
-      - id: composite-action
+      - uses: actions/checkout@v4
+      - id: self-test
         uses: ./
         with:
-          example-input: Hello?
+          service: self-test
+          tags: '["git-sha-${{ github.sha }}", "do-not-use-me"]'
+          docker-compose-file: custom-docker-path/docker-compose.yml
+          dry-run: true
       - run: |
-          echo ${{ steps.composite-action.outputs.example-output }}
+          echo ${{ steps.self-test.outputs.published }}
