@@ -1,0 +1,6 @@
+services:
+  self-test:
+    image: not.a.real.registry/self-test
+    build:
+      dockerfile: self-test/Dockerfile
+    container_name: self-test

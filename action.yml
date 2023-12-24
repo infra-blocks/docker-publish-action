@@ -1,20 +1,69 @@
-name: Composite action template
+name: Docker publish action
 description: |
-  This action does nothing meaningful.
-
+  Builds, tags and publishes your docker images.
 inputs:
-  example-input:
-    description: A useless input as an example
+  service:
+    description: The name of the service to build as found in the docker-compose file.
     required: true
+  tags:
+    description: A JSON array of tags to apply on the built image. Defaults to '["latest"]'
+    required: false
+    default: '["latest"]'
+  docker-compose-file:
+    description: The location of the docker-compose file. Defaults to "docker/docker-compose.yml"
+    required: false
+    default: "docker/docker-compose.yml"
+  dry-run:
+    description: When set to true, builds and tags, but doesn't push images.
+    required: false
+    default: 'false'
 outputs:
-  example-output:
-    description: You know it.
-    value: ${{ steps.generate-output.outputs.example-output }}
+  published:
+    description: A JSON array of images published. An image is of the form '<repo>:<tag>'
+    value: ${{ steps.publish.outputs.published }}
 runs:
   using: "composite"
   steps:
-    - run: echo "here is your input :${{ inputs.example-input }}."
+    - name: Parse metadata from ${{ inputs.docker-compose-file }}
+      id: metadata
       shell: bash
-    - id: generate-output
-      run: echo "example-output=here is your output"
+      run: |
+        image="$(yq -e '.services["${{ inputs.service }}"].image' ${{ inputs.docker-compose-file }})"
+        repo=$(echo "${image}" | cut -d ':' -f 1)
+        default_tag=$(echo "${image}" | cut -d ':' -s -f 2)
+        test -n "${default_tag}" || default_tag="latest"
+        echo "repo=${repo}" >> "${GITHUB_OUTPUT}"
+        echo "default-tag=${default_tag}" >> "${GITHUB_OUTPUT}"
+    - name: Build ${{ inputs.service }}
       shell: bash
+      run: |
+        docker compose -f ${{ inputs.docker-compose-file }} build ${{ inputs.service }}
+    - name: Tag ${{ inputs.service }}
+      shell: bash
+      run: |
+        mapfile -t tags < <(echo '${{ inputs.tags }}' | jq -e -r '.[]')
+        repo="${{ steps.metadata.outputs.repo }}"
+        default_tag="${{ steps.metadata.outputs.default-tag }}"
+        
+        for tag in "${tags[@]}"; do
+          echo "Tagging: ${repo}:${tag}"
+          docker tag "${repo}:${default_tag}" "${repo}:${tag}"
+        done
+    - name: Pushing ${{ inputs.service }}
+      id: publish
+      shell: bash
+      run: |
+        mapfile -t tags < <(echo '${{ inputs.tags }}' | jq -e -r '.[]')
+        repo="${{ steps.metadata.outputs.repo }}"
+        
+        declare -a published
+        for tag in "${tags[@]}"; do
+          echo "Pushing: ${repo}:${tag}"
+          if [[ "${{ inputs.dry-run }}" != "true" ]]; then
+            docker push "${repo}:${tag}"
+          fi
+          published+=("${repo}:${tag}")
+        done
+
+        published_json=$(printf '%s\n' "${published[@]}" | jq -R . | jq -c -s)
+        echo "published='${published_json}'" >> "${GITHUB_OUTPUT}"
