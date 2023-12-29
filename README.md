@@ -65,7 +65,7 @@ services:
 
 ## Development
 
-### Releases
+### Releasing
 
-Releases of this action is automated by the CI. It is required to provide a semantic version bump as a label on the
-PR. Upon merges, the CI will generate/update the appropriate tags. See [here](https://github.com/infrastructure-blocks/git-tag-semver-from-label-action) for more information.
+The releasing is handled at git level with semantic versioning tags. Those are automatically generated and managed
+by the [git-tag-semver-from-label-workflow](https://github.com/infrastructure-blocks/git-tag-semver-from-label-workflow).
