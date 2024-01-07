@@ -19,5 +19,6 @@ jobs:
           tags: '["git-sha-${{ github.sha }}", "do-not-use-me"]'
           docker-compose-file: custom-docker-path/docker-compose.yml
           dry-run: true
-      - run: |
+      - name: Show outputs
+        run: |          
           echo ${{ steps.self-test.outputs.published }}
