@@ -20,7 +20,7 @@ inputs:
 outputs:
   published:
     description: A JSON array of images published. An image is of the form '<repo>:<tag>'
-    value: ${{ steps.publish.outputs.published }}
+    value: ${{ steps.tag.outputs.published }}
 runs:
   using: "composite"
   steps:
@@ -32,6 +32,7 @@ runs:
         repo=$(echo "${image}" | cut -d ':' -f 1)
         default_tag=$(echo "${image}" | cut -d ':' -s -f 2)
         test -n "${default_tag}" || default_tag="latest"
+        echo "image=${image}" >> "${GITHUB_OUTPUT}" 
         echo "repo=${repo}" >> "${GITHUB_OUTPUT}"
         echo "default-tag=${default_tag}" >> "${GITHUB_OUTPUT}"
     - name: Build ${{ inputs.service }}
@@ -39,31 +40,9 @@ runs:
       run: |
         docker compose -f ${{ inputs.docker-compose-file }} build ${{ inputs.service }}
     - name: Tag ${{ inputs.service }}
-      shell: bash
-      run: |
-        mapfile -t tags < <(echo '${{ inputs.tags }}' | jq -e -r '.[]')
-        repo="${{ steps.metadata.outputs.repo }}"
-        default_tag="${{ steps.metadata.outputs.default-tag }}"
-        
-        for tag in "${tags[@]}"; do
-          echo "Tagging: ${repo}:${tag}"
-          docker tag "${repo}:${default_tag}" "${repo}:${tag}"
-        done
-    - name: Pushing ${{ inputs.service }}
-      id: publish
-      shell: bash
-      run: |
-        mapfile -t tags < <(echo '${{ inputs.tags }}' | jq -e -r '.[]')
-        repo="${{ steps.metadata.outputs.repo }}"
-        
-        declare -a published
-        for tag in "${tags[@]}"; do
-          echo "Pushing: ${repo}:${tag}"
-          if [[ "${{ inputs.dry-run }}" != "true" ]]; then
-            docker push "${repo}:${tag}"
-          fi
-          published+=("${repo}:${tag}")
-        done
-
-        published_json=$(printf '%s\n' "${published[@]}" | jq -R . | jq -c -s)
-        echo "published='${published_json}'" >> "${GITHUB_OUTPUT}"
+      id: tag
+      uses: infrastructure-blocks/docker-tag-action@v1
+      with:
+        image: ${{ steps.metadata.outputs.image }}
+        tags: ${{ inputs.tags }}
+        dry-run: ${{ inputs.dry-run }}
