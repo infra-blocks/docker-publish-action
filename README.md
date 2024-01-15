@@ -18,6 +18,25 @@ action.
 - This action can run on any event and it is made to be embedded into a more turnkey workflow, where the tags
 are intelligently determined depending on the context of the invocation.
 
+## Inputs
+
+|        Name         | Required | Description                                                                             |
+|:-------------------:|:--------:|-----------------------------------------------------------------------------------------|
+|       service       |   true   | The name of the service to build as found in the docker-compose file.                   |
+|        tags         |  false   | A stringified JSON array of tags to apply on the built image. Defaults to '["latest"]'. |
+| docker-compose-file |  false   | The location of the docker-compose file. Defaults to "docker/docker-compose.yml".       |
+|       dry-run       |  false   | When set to true, builds and tags, but doesn't push images.                             |
+
+## Outputs
+
+|   Name    | Description                                                                           |
+|:---------:|---------------------------------------------------------------------------------------|
+| published | A stringified JSON array of images published. An image is of the form '<repo>:<tag>'. |
+
+## Permissions
+
+N/A
+
 ## Usage
 
 The following example shows an invocation on an ECR public repository, using GitHub OIDC provider to authenticate
@@ -38,9 +57,9 @@ jobs:
         with:
           role-to-assume: ${{ vars.AWS_ROLE }}
           aws-region: ${{ env.AWS_REGION }}
-      - name: Log into container registry
-        run: |
-          aws ecr-public get-login-password | docker login --username AWS --password-stdin public.ecr.aws
+      - uses: aws-actions/amazon-ecr-login@v2
+        with:
+          registry-type: public
       - name: Build, tag and publish docker image
         id: docker-publish
         uses: infrastructure-blocks/docker-publish-action@v1
