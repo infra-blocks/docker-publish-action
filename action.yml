@@ -6,11 +6,11 @@ inputs:
     description: The name of the service to build as found in the docker-compose file.
     required: true
   tags:
-    description: A JSON array of tags to apply on the built image. Defaults to '["latest"]'
+    description: A stringified JSON array of tags to apply on the built image. Defaults to '["latest"]'.
     required: false
     default: '["latest"]'
   docker-compose-file:
-    description: The location of the docker-compose file. Defaults to "docker/docker-compose.yml"
+    description: The location of the docker-compose file. Defaults to "docker/docker-compose.yml".
     required: false
     default: "docker/docker-compose.yml"
   dry-run:
@@ -19,7 +19,7 @@ inputs:
     default: 'false'
 outputs:
   published:
-    description: A JSON array of images published. An image is of the form '<repo>:<tag>'
+    description: A stringified JSON array of images published. An image is of the form '<repo>:<tag>'
     value: ${{ steps.tag.outputs.published }}
 runs:
   using: "composite"
