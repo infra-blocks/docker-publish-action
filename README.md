@@ -1,7 +1,7 @@
 # docker-publish-action
 [![Release](https://github.com/infrastructure-blocks/docker-publish-action/actions/workflows/git-tag-semver-from-label.yml/badge.svg)](https://github.com/infrastructure-blocks/docker-publish-action/actions/workflows/git-tag-semver-from-label.yml)
 [![Self Test](https://github.com/infrastructure-blocks/docker-publish-action/actions/workflows/self-test.yml/badge.svg)](https://github.com/infrastructure-blocks/docker-publish-action/actions/workflows/self-test.yml)
-[![Update](https://github.com/infrastructure-blocks/docker-publish-action/actions/workflows/update-from-template.yml/badge.svg)](https://github.com/infrastructure-blocks/docker-publish-action/actions/workflows/update-from-template.yml)
+[![Update From Template](https://github.com/infrastructure-blocks/docker-publish-action/actions/workflows/update-from-template.yml/badge.svg)](https://github.com/infrastructure-blocks/docker-publish-action/actions/workflows/update-from-template.yml)
 
 This action, contrary to its name, does more than publish a docker image. It builds, tags and pushes images to
 repositories.
