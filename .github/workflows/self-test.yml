@@ -12,7 +12,8 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
-      - id: self-test
+      - name: Invoke action
+        id: self-test
         uses: ./
         with:
           service: self-test
@@ -20,5 +21,7 @@ jobs:
           docker-compose-file: custom-docker-path/docker-compose.yml
           dry-run: true
       - name: Show outputs
-        run: |          
-          echo ${{ steps.self-test.outputs.published }}
+        env:
+          OUTPUTS: ${{ toJson(steps.self-test.outputs) }}
+        run: |
+          echo "${OUTPUTS}"
