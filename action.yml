@@ -9,6 +9,13 @@ inputs:
     description: A stringified JSON array of tags to apply on the built image. Defaults to '["latest"]'.
     required: false
     default: '["latest"]'
+  build-arguments:
+    description: |
+      A stringified JSON object of build arguments to pass to the Docker compose build command.
+      The keys should be the name of the build argument and the values should be the value to pass.
+      Only objects of strings are supported.
+    required: false
+    default: '{}'
   docker-compose-file:
     description: The location of the docker-compose file. Defaults to "docker/docker-compose.yml".
     required: false
@@ -37,8 +44,18 @@ runs:
         echo "default-tag=${default_tag}" >> "${GITHUB_OUTPUT}"
     - name: Build ${{ inputs.service }}
       shell: bash
+      env:
+        BUILD_ARGS: ${{ inputs.build-arguments }}
       run: |
-        docker compose -f ${{ inputs.docker-compose-file }} build ${{ inputs.service }}
+        readarray -t build_args < <(echo "${BUILD_ARGS}" | jq -r '. | to_entries | .[] | [.key, .value] | "\(.[0])=\(.[1])"')
+        
+        if test -n "${build_args}"; then
+          # Transform to CLI options.
+          readarray -t build_args_opts < <(for arg in ${build_args[@]}; do echo "--build-arg $arg"; done)
+          docker compose -f ${{ inputs.docker-compose-file }} build ${build_args_opts[@]} ${{ inputs.service }}
+        else
+          docker compose -f ${{ inputs.docker-compose-file }} build ${{ inputs.service }}
+        fi
     - name: Tag ${{ inputs.service }}
       id: tag
       uses: infrastructure-blocks/docker-tag-action@v1
