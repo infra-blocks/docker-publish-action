@@ -35,7 +35,7 @@ runs:
       id: metadata
       shell: bash
       run: |
-        if test "${ACTIONS_STEP_DEBUG}" = "true"; then
+        if test "${{ runner.debug }}" = "1"; then
           set -x
         fi
         
@@ -51,7 +51,7 @@ runs:
       env:
         BUILD_ARGS: ${{ inputs.build-arguments }}
       run: |
-        if test "${ACTIONS_STEP_DEBUG}" = "true"; then
+        if test "${{ runner.debug }}" = "1"; then
           set -x
         fi
         
