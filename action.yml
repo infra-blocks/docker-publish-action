@@ -35,6 +35,10 @@ runs:
       id: metadata
       shell: bash
       run: |
+        if test "${ACTIONS_STEP_DEBUG}" = "true"; then
+          set -x
+        fi
+        
         image="$(yq -e '.services["${{ inputs.service }}"].image' ${{ inputs.docker-compose-file }})"
         repo=$(echo "${image}" | cut -d ':' -f 1)
         default_tag=$(echo "${image}" | cut -d ':' -s -f 2)
@@ -47,6 +51,10 @@ runs:
       env:
         BUILD_ARGS: ${{ inputs.build-arguments }}
       run: |
+        if test "${ACTIONS_STEP_DEBUG}" = "true"; then
+          set -x
+        fi
+        
         readarray -t build_args < <(echo "${BUILD_ARGS}" | jq -r '. | to_entries | .[] | [.key, .value] | "\(.[0])=\(.[1])"')
         
         if test -n "${build_args}"; then
