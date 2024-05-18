@@ -1,7 +1,14 @@
+<<<<<<< HEAD
 # docker-publish-action
 [![Release](https://github.com/infra-blocks/docker-publish-action/actions/workflows/git-tag-semver-from-label.yml/badge.svg)](https://github.com/infra-blocks/docker-publish-action/actions/workflows/git-tag-semver-from-label.yml)
 [![Self Test](https://github.com/infra-blocks/docker-publish-action/actions/workflows/self-test.yml/badge.svg)](https://github.com/infra-blocks/docker-publish-action/actions/workflows/self-test.yml)
 [![Update From Template](https://github.com/infra-blocks/docker-publish-action/actions/workflows/update-from-template.yml/badge.svg)](https://github.com/infra-blocks/docker-publish-action/actions/workflows/update-from-template.yml)
+=======
+# composite-action-template
+[![Release](https://github.com/infra-blocks/composite-action-template/actions/workflows/git-tag-semver-from-label.yml/badge.svg)](https://github.com/infra-blocks/composite-action-template/actions/workflows/git-tag-semver-from-label.yml)
+[![Self Test](https://github.com/infra-blocks/composite-action-template/actions/workflows/self-test.yml/badge.svg)](https://github.com/infra-blocks/composite-action-template/actions/workflows/self-test.yml)
+[![Update Template Instances](https://github.com/infra-blocks/composite-action-template/actions/workflows/trigger-update-from-template.yml/badge.svg)](https://github.com/infra-blocks/composite-action-template/actions/workflows/trigger-update-from-template.yml)
+>>>>>>> template/master
 
 This action, contrary to its name, does more than publish a docker image. It builds, tags and pushes images to
 repositories.
@@ -55,6 +62,7 @@ jobs:
     env:
       AWS_REGION: us-east-1
     steps:
+<<<<<<< HEAD
       - uses: actions/checkout@v4
       - uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -83,4 +91,7 @@ services:
       context: ../
       dockerfile: docker/action/Dockerfile
     container_name: my-image
+=======
+      - uses: infra-blocks/composite-action-template@v1
+>>>>>>> template/master
 ```
