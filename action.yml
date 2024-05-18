@@ -66,7 +66,7 @@ runs:
         fi
     - name: Tag ${{ inputs.service }}
       id: tag
-      uses: infrastructure-blocks/docker-tag-action@v1
+      uses: infra-blocks/docker-tag-action@v1
       with:
         image: ${{ steps.metadata.outputs.image }}
         tags: ${{ inputs.tags }}

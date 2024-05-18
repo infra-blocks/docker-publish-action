@@ -1,7 +1,7 @@
 # docker-publish-action
-[![Release](https://github.com/infrastructure-blocks/docker-publish-action/actions/workflows/git-tag-semver-from-label.yml/badge.svg)](https://github.com/infrastructure-blocks/docker-publish-action/actions/workflows/git-tag-semver-from-label.yml)
-[![Self Test](https://github.com/infrastructure-blocks/docker-publish-action/actions/workflows/self-test.yml/badge.svg)](https://github.com/infrastructure-blocks/docker-publish-action/actions/workflows/self-test.yml)
-[![Update From Template](https://github.com/infrastructure-blocks/docker-publish-action/actions/workflows/update-from-template.yml/badge.svg)](https://github.com/infrastructure-blocks/docker-publish-action/actions/workflows/update-from-template.yml)
+[![Release](https://github.com/infra-blocks/docker-publish-action/actions/workflows/git-tag-semver-from-label.yml/badge.svg)](https://github.com/infra-blocks/docker-publish-action/actions/workflows/git-tag-semver-from-label.yml)
+[![Self Test](https://github.com/infra-blocks/docker-publish-action/actions/workflows/self-test.yml/badge.svg)](https://github.com/infra-blocks/docker-publish-action/actions/workflows/self-test.yml)
+[![Update From Template](https://github.com/infra-blocks/docker-publish-action/actions/workflows/update-from-template.yml/badge.svg)](https://github.com/infra-blocks/docker-publish-action/actions/workflows/update-from-template.yml)
 
 This action, contrary to its name, does more than publish a docker image. It builds, tags and pushes images to
 repositories.
@@ -65,7 +65,7 @@ jobs:
           registry-type: public
       - name: Build, tag and publish docker image
         id: docker-publish
-        uses: infrastructure-blocks/docker-publish-action@v1
+        uses: infra-blocks/docker-publish-action@v1
         with:
           service: action
           tags: '["big-tag", "bigger-tag"]'
